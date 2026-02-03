@@ -1,1 +1,899 @@
-XTREME CLOUD READY
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Xtreme Game Corp — XTREME MUSIC ENGINE (GitHub Cloud)</title>
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #000000;
+    font-family: Tahoma, Arial, sans-serif;
+    color: #fff;
+    height: 100%;
+}
+
+/* Simple CRT-ish background */
+body {
+    background: radial-gradient(circle at top, #1b4bff 0, #000010 45%, #000000 100%);
+    color: #e0f0ff;
+}
+#screenWrapper {
+    position: absolute;
+    inset: 20px;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow:
+        0 0 40px rgba(0,160,255,0.6),
+        0 0 120px rgba(0,0,0,1) inset;
+    background: radial-gradient(circle at top, #102040 0, #02040a 60%, #000000 100%);
+}
+
+/* Window base */
+.winamp-window {
+    position: absolute;
+    background: #101820;
+    border: 1px solid #000;
+    box-shadow: 0 0 0 1px #00a0ff;
+    font-size: 11px;
+}
+.titlebar {
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 3px;
+    cursor: move;
+    user-select: none;
+    background: linear-gradient(to right, #0030a0, #00a0ff);
+}
+.titlebar-text {
+    font-family: "MS Sans Serif", Tahoma, sans-serif;
+    font-size: 10px;
+    color: #f0f0f0;
+    text-shadow: 1px 1px 0 #000;
+    white-space: nowrap;
+}
+.titlebar-buttons {
+    display: flex;
+    gap: 2px;
+}
+.title-btn {
+    width: 14px;
+    height: 14px;
+    background-size: cover;
+    cursor: pointer;
+}
+.title-btn-ontop {
+    background: #202020;
+}
+.title-btn-min {
+    background: #202020;
+}
+.title-btn-close {
+    background: #202020;
+}
+
+/* Main window */
+#mainWindow {
+    width: 460px;
+    top: 40px;
+    left: 40px;
+}
+.main-content {
+    padding: 4px;
+}
+#topRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+#fileInput {
+    font-size: 10px;
+    color: #fff;
+}
+select, button.small-btn {
+    font-size: 10px;
+    background: #101010;
+    color: #e0e0e0;
+    border: 1px solid #000;
+    box-shadow: 0 0 0 1px #404040;
+    padding: 1px 3px;
+    cursor: pointer;
+}
+#controls {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+.ctrl-btn {
+    width: 26px;
+    height: 20px;
+    background: #101010;
+    border: 1px solid #000;
+    box-shadow: 0 0 0 1px #404040;
+    cursor: pointer;
+    text-align: center;
+    line-height: 18px;
+    font-size: 10px;
+}
+.bar {
+    width: 100%;
+    margin: 2px 0;
+}
+#timeDisplay {
+    text-align: center;
+    font-size: 10px;
+    margin-bottom: 2px;
+}
+#visualizer {
+    width: 100%;
+    height: 80px;
+    background: #000;
+    border: 1px solid #000;
+    box-shadow: 0 0 0 1px #404040;
+}
+#dropZone {
+    margin-top: 4px;
+    font-size: 10px;
+    text-align: center;
+    padding: 3px;
+    border: 1px dashed #555;
+    color: #ccc;
+}
+#dropZone.dragover {
+    border-color: #ffb000;
+    color: #ffb000;
+}
+.mini-mode #visualizer,
+.mini-mode #topRow,
+.mini-mode #dropZone {
+    display: none;
+}
+.mini-mode {
+    width: 260px !important;
+}
+
+/* Playlist window */
+#playlistWindow {
+    width: 260px;
+    top: 70px;
+    left: 520px;
+}
+.playlist-content {
+    padding: 2px;
+}
+#playlist {
+    background: #000;
+    color: #00ff00;
+    font-family: "Lucida Console", monospace;
+    font-size: 10px;
+    height: 200px;
+    overflow-y: auto;
+    border: 1px solid #000;
+    box-shadow: 0 0 0 1px #404040;
+    padding: 2px;
+}
+#playlist div {
+    padding: 1px 3px;
+    cursor: pointer;
+}
+#playlist div.active {
+    background: #004000;
+}
+
+/* Metadata window */
+#metaWindow {
+    width: 360px;
+    top: 80px;
+    left: 200px;
+}
+.meta-content {
+    padding: 4px;
+    font-size: 10px;
+}
+.meta-grid {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 2px 4px;
+    margin-bottom: 4px;
+}
+.meta-grid label {
+    text-align: right;
+    padding-right: 4px;
+}
+.meta-grid input,
+.meta-grid select,
+.meta-grid textarea {
+    font-size: 10px;
+    background: #050810;
+    color: #e0e0ff;
+    border: 1px solid #000;
+    box-shadow: 0 0 0 1px #303050;
+    padding: 2px;
+}
+#metaLyrics {
+    height: 80px;
+    resize: vertical;
+}
+#metaComment {
+    height: 40px;
+    resize: vertical;
+}
+#metaButtons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+}
+#metaArtPreview {
+    width: 80px;
+    height: 80px;
+    background: #000;
+    border: 1px solid #000;
+    box-shadow: 0 0 0 1px #404040;
+    margin-bottom: 4px;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Cloud window */
+#cloudWindow {
+    width: 360px;
+    top: 260px;
+    left: 200px;
+}
+.cloud-content {
+    padding: 4px;
+    font-size: 10px;
+}
+#cloudButtons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+#cloudList {
+    background: #000;
+    color: #00ffcc;
+    font-family: "Lucida Console", monospace;
+    font-size: 10px;
+    height: 160px;
+    overflow-y: auto;
+    border: 1px solid #000;
+    box-shadow: 0 0 0 1px #404040;
+    padding: 2px;
+}
+#cloudList div {
+    padding: 2px 3px;
+    cursor: pointer;
+}
+#cloudList div:hover {
+    background: #003333;
+}
+
+/* Draggable */
+.titlebar[data-drag] {
+    cursor: move;
+}
+</style>
+</head>
+<body>
+<div id="screenWrapper">
+
+    <!-- MAIN WINDOW -->
+    <div id="mainWindow" class="winamp-window">
+        <div class="titlebar" data-drag="mainWindow">
+            <div class="titlebar-text">Xtreme Game Corp - XTREME MUSIC ENGINE</div>
+            <div class="titlebar-buttons">
+                <div class="title-btn title-btn-ontop" id="mainOnTop" title="Always on top"></div>
+                <div class="title-btn title-btn-min" id="mainMini" title="Mini mode"></div>
+                <div class="title-btn title-btn-close" id="mainClose" title="Close (fake)"></div>
+            </div>
+        </div>
+        <div class="main-content">
+            <div id="topRow">
+                <input type="file" id="fileInput" accept="audio/mp3,audio/mpeg" multiple>
+                <button class="small-btn" id="showPlaylist">Playlist</button>
+                <button class="small-btn" id="showMeta">Metadata</button>
+                <button class="small-btn" id="showCloud">Cloud</button>
+            </div>
+
+            <div id="controls">
+                <div class="ctrl-btn" id="prevBtn">◄◄</div>
+                <div class="ctrl-btn" id="playBtn">►</div>
+                <div class="ctrl-btn" id="pauseBtn">❚❚</div>
+                <div class="ctrl-btn" id="stopBtn">■</div>
+                <div class="ctrl-btn" id="nextBtn">►►</div>
+            </div>
+
+            <input type="range" id="seekbar" class="bar" min="0" max="100" value="0">
+            <input type="range" id="volume" class="bar" min="0" max="1" step="0.01" value="1">
+
+            <div id="timeDisplay">00:00 / 00:00</div>
+
+            <canvas id="visualizer"></canvas>
+
+            <div id="dropZone">Drag & drop MP3 files here</div>
+        </div>
+    </div>
+
+    <!-- PLAYLIST WINDOW -->
+    <div id="playlistWindow" class="winamp-window">
+        <div class="titlebar" data-drag="playlistWindow">
+            <div class="titlebar-text">Playlist</div>
+            <div class="titlebar-buttons">
+                <div class="title-btn title-btn-ontop" id="plOnTop" title="Always on top"></div>
+                <div class="title-btn title-btn-min" id="plMin" title="Hide"></div>
+                <div class="title-btn title-btn-close" id="plClose" title="Close"></div>
+            </div>
+        </div>
+        <div class="playlist-content">
+            <div id="playlist"></div>
+        </div>
+    </div>
+
+    <!-- METADATA EDITOR WINDOW -->
+    <div id="metaWindow" class="winamp-window" style="display:none;">
+        <div class="titlebar" data-drag="metaWindow">
+            <div class="titlebar-text">MP3 Metadata Editor</div>
+            <div class="titlebar-buttons">
+                <div class="title-btn title-btn-ontop" id="metaOnTop" title="Always on top"></div>
+                <div class="title-btn title-btn-min" id="metaMin" title="Hide"></div>
+                <div class="title-btn title-btn-close" id="metaClose" title="Close"></div>
+            </div>
+        </div>
+        <div class="meta-content">
+            <div style="display:flex; gap:8px;">
+                <div id="metaArtPreview"></div>
+                <div style="flex:1;">
+                    <div class="meta-grid">
+                        <label>Title</label><input id="metaTitle" type="text">
+                        <label>Artist</label><input id="metaArtist" type="text">
+                        <label>Album</label><input id="metaAlbum" type="text">
+                        <label>Year</label><input id="metaYear" type="number">
+                        <label>Track #</label><input id="metaTrack" type="number">
+                        <label>Genre</label>
+                        <select id="metaGenre">
+                            <option value="">(none)</option>
+                            <option>Rock</option>
+                            <option>Pop</option>
+                            <option>Hard Rock</option>
+                            <option>Metal</option>
+                            <option>Electronic</option>
+                            <option>Techno</option>
+                            <option>Dance</option>
+                            <option>Hip-Hop</option>
+                            <option>Jazz</option>
+                            <option>Classical</option>
+                            <option>Game</option>
+                            <option>Soundtrack</option>
+                        </select>
+                        <label>Mood</label><input id="metaMood" type="text" placeholder="Energetic, Chill, etc.">
+                        <label>Scene</label><input id="metaScene" type="text" placeholder="Boss fight, City, etc.">
+                    </div>
+                </div>
+            </div>
+            <div class="meta-grid" style="margin-top:4px;">
+                <label>Comment</label><textarea id="metaComment"></textarea>
+                <label>Lyrics</label><textarea id="metaLyrics"></textarea>
+            </div>
+            <div id="metaButtons">
+                <button class="small-btn" id="metaAutoFill">Auto-fill from filename</button>
+                <button class="small-btn" id="metaSave">Save Metadata</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CLOUD LIBRARY WINDOW -->
+    <div id="cloudWindow" class="winamp-window" style="display:none;">
+        <div class="titlebar" data-drag="cloudWindow">
+            <div class="titlebar-text">Cloud Library (GitHub)</div>
+            <div class="titlebar-buttons">
+                <div class="title-btn title-btn-ontop" id="cloudOnTop" title="Always on top"></div>
+                <div class="title-btn title-btn-min" id="cloudMin" title="Hide"></div>
+                <div class="title-btn title-btn-close" id="cloudClose" title="Close"></div>
+            </div>
+        </div>
+        <div class="cloud-content">
+            <div id="cloudButtons">
+                <button class="small-btn" id="cloudUpload">Upload current track</button>
+                <button class="small-btn" id="cloudRefresh">Refresh cloud list</button>
+            </div>
+            <div id="cloudList"></div>
+            <div style="margin-top:4px;font-size:9px;color:#aaa;">
+                Uses GitHub repo: RockNReel1/xtreme-cloud<br>
+                MP3s go into /tracks, metadata into tracks.json
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+/* ===== CONFIG: PUT YOUR REAL TOKEN HERE ===== */
+const GITHUB_USERNAME = "RockNReel1";
+const GITHUB_REPO = "xtreme-cloud";
+const GITHUB_TOKEN = "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"; // <<< REPLACE THIS STRING ONLY
+const GITHUB_API_BASE = "https://api.github.com";
+const GITHUB_PAGES_BASE = "https://" + GITHUB_USERNAME + ".github.io/" + GITHUB_REPO + "/";
+
+/* ===== AUDIO + PLAYLIST ===== */
+let audio = new Audio();
+let playlist = [];
+let currentIndex = -1;
+let metadataStore = {}; // index -> metadata
+
+const fileInput = document.getElementById("fileInput");
+const seekbar = document.getElementById("seekbar");
+const volume = document.getElementById("volume");
+const timeDisplay = document.getElementById("timeDisplay");
+const playlistDiv = document.getElementById("playlist");
+const canvas = document.getElementById("visualizer");
+const ctx = canvas.getContext("2d");
+const dropZone = document.getElementById("dropZone");
+
+const mainWindow = document.getElementById("mainWindow");
+const playlistWindow = document.getElementById("playlistWindow");
+const metaWindow = document.getElementById("metaWindow");
+const cloudWindow = document.getElementById("cloudWindow");
+
+const showPlaylist = document.getElementById("showPlaylist");
+const showMeta = document.getElementById("showMeta");
+const showCloud = document.getElementById("showCloud");
+
+const mainMini = document.getElementById("mainMini");
+const mainClose = document.getElementById("mainClose");
+const mainOnTop = document.getElementById("mainOnTop");
+
+const plMin = document.getElementById("plMin");
+const plClose = document.getElementById("plClose");
+const plOnTop = document.getElementById("plOnTop");
+
+const metaMin = document.getElementById("metaMin");
+const metaClose = document.getElementById("metaClose");
+const metaOnTop = document.getElementById("metaOnTop");
+
+const cloudMin = document.getElementById("cloudMin");
+const cloudClose = document.getElementById("cloudClose");
+const cloudOnTop = document.getElementById("cloudOnTop");
+
+const metaTitle = document.getElementById("metaTitle");
+const metaArtist = document.getElementById("metaArtist");
+const metaAlbum = document.getElementById("metaAlbum");
+const metaYear = document.getElementById("metaYear");
+const metaTrack = document.getElementById("metaTrack");
+const metaGenre = document.getElementById("metaGenre");
+const metaMood = document.getElementById("metaMood");
+const metaScene = document.getElementById("metaScene");
+const metaComment = document.getElementById("metaComment");
+const metaLyrics = document.getElementById("metaLyrics");
+const metaArtPreview = document.getElementById("metaArtPreview");
+const metaAutoFill = document.getElementById("metaAutoFill");
+const metaSave = document.getElementById("metaSave");
+
+const cloudUpload = document.getElementById("cloudUpload");
+const cloudRefresh = document.getElementById("cloudRefresh");
+const cloudList = document.getElementById("cloudList");
+
+let audioCtx, analyser, sourceNode;
+
+function initAudioGraph() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    sourceNode = audioCtx.createMediaElementSource(audio);
+    sourceNode.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    drawVisualizer();
+}
+
+function addFiles(files) {
+    for (let f of files) {
+        if (!f.type.match(/audio\/(mp3|mpeg)/)) continue;
+        const url = URL.createObjectURL(f);
+        playlist.push({ name: f.name, url, file: f });
+        const idx = playlist.length - 1;
+        metadataStore[idx] = {
+            title: f.name.replace(/\.[^/.]+$/, ""),
+            artist: "",
+            album: "",
+            year: "",
+            track: "",
+            genre: "",
+            mood: "",
+            scene: "",
+            comment: "",
+            lyrics: "",
+            artDataUrl: ""
+        };
+    }
+    renderPlaylist();
+    if (currentIndex === -1 && playlist.length > 0) playTrack(0);
+}
+
+fileInput.onchange = () => {
+    initAudioGraph();
+    addFiles(fileInput.files);
+};
+
+function renderPlaylist() {
+    playlistDiv.innerHTML = "";
+    playlist.forEach((t,i)=>{
+        const d = document.createElement("div");
+        const meta = metadataStore[i] || {};
+        const displayName = meta.title || t.name;
+        d.textContent = displayName;
+        if (i === currentIndex) d.classList.add("active");
+        d.onclick = () => playTrack(i);
+        playlistDiv.appendChild(d);
+    });
+}
+
+function playTrack(i) {
+    if (playlist.length === 0) return;
+    currentIndex = (i + playlist.length) % playlist.length;
+    audio.src = playlist[currentIndex].url;
+    audio.load();
+    audio.play();
+    renderPlaylist();
+    initAudioGraph();
+    loadMetadataIntoEditor();
+}
+
+document.getElementById("playBtn").onclick = () => {
+    if (!audio.src && playlist.length > 0) playTrack(0);
+    else audio.play();
+    initAudioGraph();
+};
+document.getElementById("pauseBtn").onclick = () => audio.pause();
+document.getElementById("stopBtn").onclick = () => { audio.pause(); audio.currentTime = 0; };
+document.getElementById("prevBtn").onclick = () => playTrack(currentIndex - 1);
+document.getElementById("nextBtn").onclick = () => playTrack(currentIndex + 1);
+
+volume.oninput = () => audio.volume = volume.value;
+seekbar.oninput = () => {
+    if (!audio.duration) return;
+    audio.currentTime = audio.duration * (seekbar.value / 100);
+};
+
+setInterval(()=>{
+    if (!audio.duration) return;
+    seekbar.value = (audio.currentTime / audio.duration) * 100;
+    timeDisplay.textContent = formatTime(audio.currentTime) + " / " + formatTime(audio.duration);
+},200);
+
+function formatTime(sec) {
+    let m = Math.floor(sec / 60);
+    let s = Math.floor(sec % 60);
+    return `${m.toString().padStart(2,"0")}:${s.toString().padStart(2,"0")}`;
+}
+
+function drawVisualizer() {
+    requestAnimationFrame(drawVisualizer);
+    if (!analyser) {
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        return;
+    }
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    let buffer = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteFrequencyData(buffer);
+    let barWidth = canvas.width / buffer.length;
+    let x = 0;
+    for (let i = 0; i < buffer.length; i++) {
+        let barHeight = buffer[i];
+        ctx.fillStyle = `rgb(${barHeight+50}, 200, 50)`;
+        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+        x += barWidth + 1;
+    }
+}
+
+dropZone.addEventListener("dragover", e => {
+    e.preventDefault();
+    dropZone.classList.add("dragover");
+});
+dropZone.addEventListener("dragleave", e => {
+    e.preventDefault();
+    dropZone.classList.remove("dragover");
+});
+dropZone.addEventListener("drop", e => {
+    e.preventDefault();
+    dropZone.classList.remove("dragover");
+    const files = e.dataTransfer.files;
+    if (files && files.length) {
+        initAudioGraph();
+        addFiles(files);
+    }
+});
+
+audio.addEventListener("ended", () => {
+    if (playlist.length === 0) return;
+    playTrack(currentIndex + 1);
+});
+
+/* Show/hide windows */
+showPlaylist.onclick = () => { playlistWindow.style.display = "block"; };
+showMeta.onclick = () => { metaWindow.style.display = "block"; loadMetadataIntoEditor(); };
+showCloud.onclick = () => { cloudWindow.style.display = "block"; };
+
+plMin.onclick = () => playlistWindow.style.display = "none";
+plClose.onclick = () => playlistWindow.style.display = "none";
+metaMin.onclick = () => metaWindow.style.display = "none";
+metaClose.onclick = () => metaWindow.style.display = "none";
+cloudMin.onclick = () => cloudWindow.style.display = "none";
+cloudClose.onclick = () => cloudWindow.style.display = "none";
+
+/* Mini mode */
+mainMini.onclick = () => {
+    mainWindow.classList.toggle("mini-mode");
+};
+
+/* Always on top */
+function bringToFront(el) {
+    const maxZ = Array.from(document.querySelectorAll('.winamp-window'))
+        .reduce((m, w) => Math.max(m, parseInt(getComputedStyle(w).zIndex) || 0), 0);
+    el.style.zIndex = maxZ + 1;
+}
+mainOnTop.onclick = () => bringToFront(mainWindow);
+plOnTop.onclick = () => bringToFront(playlistWindow);
+metaOnTop.onclick = () => bringToFront(metaWindow);
+cloudOnTop.onclick = () => bringToFront(cloudWindow);
+
+/* Fake close main */
+mainClose.onclick = () => {
+    mainWindow.style.display = "none";
+    playlistWindow.style.display = "none";
+    metaWindow.style.display = "none";
+    cloudWindow.style.display = "none";
+};
+
+/* Draggable windows */
+function makeDraggable(titlebar) {
+    const winId = titlebar.getAttribute("data-drag");
+    const win = document.getElementById(winId);
+    let offsetX = 0, offsetY = 0, dragging = false;
+
+    titlebar.addEventListener("mousedown", e => {
+        dragging = true;
+        bringToFront(win);
+        offsetX = e.clientX - win.offsetLeft;
+        offsetY = e.clientY - win.offsetTop;
+    });
+    document.addEventListener("mousemove", e => {
+        if (!dragging) return;
+        win.style.left = (e.clientX - offsetX) + "px";
+        win.style.top = (e.clientY - offsetY) + "px";
+    });
+    document.addEventListener("mouseup", () => dragging = false);
+}
+document.querySelectorAll(".titlebar[data-drag]").forEach(tb => makeDraggable(tb));
+
+/* ===== METADATA EDITOR ===== */
+function loadMetadataIntoEditor() {
+    if (currentIndex < 0 || !playlist[currentIndex]) return;
+    const meta = metadataStore[currentIndex] || {};
+    metaTitle.value = meta.title || playlist[currentIndex].name.replace(/\.[^/.]+$/, "");
+    metaArtist.value = meta.artist || "";
+    metaAlbum.value = meta.album || "";
+    metaYear.value = meta.year || "";
+    metaTrack.value = meta.track || "";
+    metaGenre.value = meta.genre || "";
+    metaMood.value = meta.mood || "";
+    metaScene.value = meta.scene || "";
+    metaComment.value = meta.comment || "";
+    metaLyrics.value = meta.lyrics || "";
+    if (meta.artDataUrl) {
+        metaArtPreview.style.backgroundImage = `url(${meta.artDataUrl})`;
+    } else {
+        metaArtPreview.style.backgroundImage = "none";
+    }
+}
+
+metaAutoFill.onclick = () => {
+    if (currentIndex < 0 || !playlist[currentIndex]) return;
+    const name = playlist[currentIndex].name.replace(/\.[^/.]+$/, "");
+    metaTitle.value = name;
+};
+
+metaSave.onclick = () => {
+    if (currentIndex < 0 || !playlist[currentIndex]) return;
+    metadataStore[currentIndex] = {
+        title: metaTitle.value,
+        artist: metaArtist.value,
+        album: metaAlbum.value,
+        year: metaYear.value,
+        track: metaTrack.value,
+        genre: metaGenre.value,
+        mood: metaMood.value,
+        scene: metaScene.value,
+        comment: metaComment.value,
+        lyrics: metaLyrics.value,
+        artDataUrl: metadataStore[currentIndex]?.artDataUrl || ""
+    };
+    renderPlaylist();
+};
+
+/* ===== GITHUB CLOUD LOGIC ===== */
+
+async function githubUploadFile(path, contentBase64, message) {
+    const url = `${GITHUB_API_BASE}/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${encodeURIComponent(path)}`;
+    // Check if file exists to get its SHA
+    let sha = null;
+    try {
+        const res = await fetch(url, {
+            headers: {
+                "Authorization": `token ${GITHUB_TOKEN}`,
+                "Accept": "application/vnd.github+json"
+            }
+        });
+        if (res.ok) {
+            const data = await res.json();
+            sha = data.sha;
+        }
+    } catch (e) {
+        // ignore
+    }
+
+    const body = {
+        message: message,
+        content: contentBase64
+    };
+    if (sha) body.sha = sha;
+
+    const res2 = await fetch(url, {
+        method: "PUT",
+        headers: {
+            "Authorization": `token ${GITHUB_TOKEN}`,
+            "Accept": "application/vnd.github+json"
+        },
+        body: JSON.stringify(body)
+    });
+    if (!res2.ok) {
+        throw new Error("GitHub upload failed: " + res2.status);
+    }
+    return res2.json();
+}
+
+async function githubGetFile(path) {
+    const url = `${GITHUB_API_BASE}/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${encodeURIComponent(path)}`;
+    const res = await fetch(url, {
+        headers: {
+            "Accept": "application/vnd.github+json"
+        }
+    });
+    if (!res.ok) {
+        throw new Error("GitHub get failed: " + res.status);
+    }
+    return res.json();
+}
+
+/* Upload current track: MP3 to /tracks, metadata into tracks.json */
+cloudUpload.onclick = async () => {
+    if (currentIndex < 0 || !playlist[currentIndex]) {
+        alert("No current track to upload.");
+        return;
+    }
+    const track = playlist[currentIndex];
+    const meta = metadataStore[currentIndex] || {};
+    if (!track.file) {
+        alert("This track was not loaded from a local file, cannot upload.");
+        return;
+    }
+    if (!GITHUB_TOKEN || GITHUB_TOKEN === "YOUR_TOKEN_HERE") {
+        alert("You must put your real GitHub token into GITHUB_TOKEN in the code.");
+        return;
+    }
+
+    try {
+        // 1) Read file as base64
+        const fileBase64 = await fileToBase64(track.file);
+        const base64Content = fileBase64.split(",")[1];
+
+        const safeName = track.file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const mp3Path = `tracks/${safeName}`;
+
+        // 2) Upload MP3 file
+        await githubUploadFile(mp3Path, base64Content, `Add track ${safeName}`);
+
+        const publicUrl = GITHUB_PAGES_BASE + "tracks/" + encodeURIComponent(safeName);
+
+        // 3) Update tracks.json
+        let tracksArray = [];
+        let tracksSha = null;
+        try {
+            const fileData = await githubGetFile("tracks.json");
+            tracksSha = fileData.sha;
+            const decoded = atob(fileData.content.replace(/\n/g, ""));
+            tracksArray = JSON.parse(decoded);
+        } catch (e) {
+            tracksArray = [];
+        }
+
+        tracksArray.push({
+            title: meta.title || track.name,
+            artist: meta.artist || "",
+            album: meta.album || "",
+            year: meta.year || "",
+            track: meta.track || "",
+            genre: meta.genre || "",
+            mood: meta.mood || "",
+            scene: meta.scene || "",
+            comment: meta.comment || "",
+            lyrics: meta.lyrics || "",
+            url: publicUrl
+        });
+
+        const newJson = JSON.stringify(tracksArray, null, 2);
+        const newBase64 = btoa(unescape(encodeURIComponent(newJson)));
+
+        const url = `${GITHUB_API_BASE}/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/tracks.json`;
+        const body = {
+            message: "Update tracks.json",
+            content: newBase64
+        };
+        if (tracksSha) body.sha = tracksSha;
+
+        const res = await fetch(url, {
+            method: "PUT",
+            headers: {
+                "Authorization": `token ${GITHUB_TOKEN}`,
+                "Accept": "application/vnd.github+json"
+            },
+            body: JSON.stringify(body)
+        });
+        if (!res.ok) throw new Error("tracks.json update failed: " + res.status);
+
+        alert("Track uploaded to GitHub cloud.");
+        refreshCloudList();
+    } catch (e) {
+        console.error(e);
+        alert("Upload failed: " + e.message);
+    }
+};
+
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+/* Load tracks.json from GitHub and show cloud list */
+async function refreshCloudList() {
+    cloudList.innerHTML = "Loading cloud tracks...";
+    try {
+        const fileData = await githubGetFile("tracks.json");
+        const decoded = atob(fileData.content.replace(/\n/g, ""));
+        const tracksArray = JSON.parse(decoded);
+        cloudList.innerHTML = "";
+        tracksArray.forEach(t => {
+            const div = document.createElement("div");
+            div.textContent = `${t.title || "(no title)"} — ${t.artist || "Unknown"}`;
+            div.onclick = () => {
+                audio.src = t.url;
+                audio.load();
+                audio.play();
+            };
+            cloudList.appendChild(div);
+        });
+        if (!tracksArray.length) {
+            cloudList.innerHTML = "<div>No tracks in cloud yet.</div>";
+        }
+    } catch (e) {
+        cloudList.innerHTML = "No tracks.json found yet or error loading.";
+    }
+}
+
+cloudRefresh.onclick = () => {
+    refreshCloudList();
+};
+</script>
+</body>
+</html>
+
